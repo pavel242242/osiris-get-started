@@ -4,7 +4,7 @@
       "command": "/bin/bash",
       "args": [
         "-lc",
-        "cd /Users/chocho/projects/tutorial/osiris-get-started && source .venv/bin/activate && python -m osiris.cli.mcp_entrypoint"
+        "source .venv/bin/activate && python -m osiris.cli.mcp_entrypoint"
       ]
     }
   }

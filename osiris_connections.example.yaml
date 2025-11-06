@@ -1,0 +1,28 @@
+# Osiris Connections Configuration Template
+# Copy this file to osiris_connections.yaml and configure your connections
+
+version: "1.0"
+
+connections:
+  mysql:
+    primary:
+      default: true
+      host: ${MYSQL_HOST}
+      port: 3306
+      user: ${MYSQL_USER}
+      password: ${MYSQL_PASSWORD}
+      database: ${MYSQL_DATABASE}
+      pool_size: 5
+      timeout: 30
+
+  supabase:
+    primary:
+      default: true
+      project_id: ${SUPABASE_PROJECT_ID}
+      anon_key: ${SUPABASE_ANON_PUBLIC_KEY}
+      service_role_key: ${SUPABASE_SERVICE_ROLE_KEY}
+
+  duckdb:
+    memory:
+      default: true
+      database: ":memory:"

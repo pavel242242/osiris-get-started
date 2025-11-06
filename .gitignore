@@ -1,10 +1,61 @@
-# Python
+# ==========================================
+# Osiris Get Started Tutorial - .gitignore
+# ==========================================
+
+# ===== Generated During Setup (Session 1) =====
+# These are created by the setup process and should not be committed
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Osiris Project Files
+osiris.yaml
+pipelines/
+build/
+aiop/
+run_logs/
+components/
+
+# Osiris Internal State
+.osiris/cache/
+.osiris/sessions/
+.osiris/index/
+
+# MCP Configuration
+.mcp.json
+
+# Claude Settings
+.claude/
+
+# ===== Tutorial Outputs (Generated During Tutorials) =====
+# These are created when running tutorials
+
+# Tutorial data outputs
+examples/tutorial-*/data-out/
+
+# Keep the data-out directories themselves
+!examples/tutorial-*/data-out/.gitkeep
+
+# ===== Credentials & Secrets (NEVER COMMIT) =====
+.env
+.env.local
+osiris_connections.yaml
+*.key
+*.pem
+credentials.json
+secrets.yaml
+.osiris/profiles/*.yaml
+!.osiris/profiles/example.yaml
+
+# ===== Python =====
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -20,96 +71,41 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
-.venv/
-venv/
-ENV/
-env/
-
-# Osiris
-.osiris/logs/
-.osiris/cache/
-examples/data-out/*
-!examples/data-out/.gitkeep
-examples/manifests/*
-!examples/manifests/.gitkeep
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Credentials (IMPORTANT: Never commit these!)
-.env
-.env.local
-*.key
-*.pem
-credentials.json
-secrets.yaml
-.osiris/profiles/*.yaml
-!.osiris/profiles/example.yaml
-
-# Logs
-*.log
-
-# Testing
+# ===== Testing =====
 .pytest_cache/
 .coverage
 htmlcov/
+.tox/
 
-# Temporary files
-*.tmp
-*.bak
-debug/
-
-# Osiris Filesystem Contract v1 - Auto-generated ignore patterns
-
-# Runtime artifacts (ephemeral, do not commit)
-run_logs/
-aiop/**/annex/
-
-# Internal state (do not commit)
-.osiris/cache/
-.osiris/sessions/
-.osiris/index/counters.sqlite
-.osiris/index/counters.sqlite-shm
-.osiris/index/counters.sqlite-wal
-
-# Secrets and credentials (NEVER commit)
-.env
-osiris_connections.yaml
-
-# Build artifacts (team policy - some teams commit these)
-# Uncomment next line if you don't want to version build artifacts:
-# build/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-.venv/
-venv/
-ENV/
-env/
-
-# IDEs
+# ===== IDEs =====
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.project
+.pydevproject
 
-# OS
+# ===== OS =====
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Legacy logs (migration period)
+# ===== Logs =====
+*.log
 logs/
 
-# Components directory (will be included in pip package in future)
-components/
+# ===== Temporary Files =====
+*.tmp
+*.bak
+*.swp
+debug/
+temp/
+tmp/
+
+# ===== What IS committed =====
+# - README.md
+# - docs/*.md (all tutorial guides)
+# - examples/tutorial-*/data-in/ (sample CSV files)
+# - .gitignore (this file)
+# - PROMPTS.md (ready-to-use prompts)
