@@ -17,7 +17,6 @@ pipelines/
 build/
 aiop/
 run_logs/
-components/
 
 # Osiris Internal State
 .osiris/cache/

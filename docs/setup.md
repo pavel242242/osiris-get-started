@@ -78,24 +78,6 @@ else
     echo "✅ Osiris project already initialized"
 fi
 
-# Check/Copy components
-if [ ! -d "components" ] || [ -z "$(ls -A components 2>/dev/null)" ]; then
-    echo "📦 Copying component definitions..."
-    OSIRIS_PATH=$(python -c "import osiris, os; print(os.path.dirname(osiris.__file__))")
-    cp -r "$OSIRIS_PATH/../components" .
-    echo "✅ Components copied"
-else
-    echo "✅ Components already exist"
-fi
-
-# Verify components
-COMPONENT_COUNT=$(osiris components list 2>/dev/null | grep -c "│" || echo "0")
-if [ "$COMPONENT_COUNT" -gt "0" ]; then
-    echo "✅ Components verified ($COMPONENT_COUNT components available)"
-else
-    echo "⚠️  Warning: Components may not be loaded correctly"
-fi
-
 # Check/Create .mcp.json
 if [ ! -f ".mcp.json" ]; then
     echo "📦 Creating MCP server configuration..."
@@ -164,9 +146,6 @@ osiris --version  # Should show: Osiris v0.5.1 or higher
 # Verify project structure
 ls osiris.yaml pipelines/ build/ aiop/  # All should exist
 
-# Verify components
-osiris components list | head -10  # Should list available components
-
 # Verify MCP configuration
 cat .mcp.json  # Should show osiris config
 
@@ -203,21 +182,6 @@ source .venv/bin/activate
 which osiris  # Should show path in .venv/bin/
 ```
 
-### Issue: "No components found"
-
-**Solution:**
-```bash
-# Activate virtual environment
-source .venv/bin/activate
-
-# Copy components from installed package
-OSIRIS_PATH=$(python -c "import osiris, os; print(os.path.dirname(osiris.__file__))")
-cp -r "$OSIRIS_PATH/../components" .
-
-# Verify
-osiris components list
-```
-
 ### Issue: MCP server not connecting in Claude Code
 
 **Solution:**
@@ -243,7 +207,6 @@ osiris-get-started/
 ├── build/                          # Compiled manifests (gitignored)
 ├── aiop/                           # AI Operation Package (gitignored)
 ├── run_logs/                       # Execution logs (gitignored)
-├── components/                     # Component definitions (gitignored)
 └── examples/                       # Tutorial data (committed)
 ```
 
