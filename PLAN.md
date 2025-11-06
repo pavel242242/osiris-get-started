@@ -1,7 +1,17 @@
 # My First Process Tutorial - Comprehensive Plan
 
 ## Overview
-This document outlines the structure for `my_first_process.md` - a comprehensive tutorial that guides users through building their first data pipeline with Osiris, from a business problem to a complete solution.
+This document outlines the structure for `my_first_process.md` - a comprehensive tutorial that guides users through solving their first business problem with Osiris, where **Claude Code acts as the interface** between the user and Osiris.
+
+## Critical Interaction Model
+
+**USER** → speaks to → **CLAUDE CODE** → uses → **OSIRIS** → generates → **RESULTS**
+
+- Users **do NOT** run Osiris commands directly
+- Users **describe business goals** in natural language to Claude Code
+- Claude Code **uses Osiris MCP tools** to generate and execute pipelines
+- Users **observe, validate, and guide** the process
+- Tutorial shows "watching AI in action" while explaining what happens behind the scenes
 
 ---
 
@@ -61,7 +71,7 @@ Furniture,North America,8920.30,89,100.23
 
 ## Tutorial Structure
 
-## Phase 1: Introduction & Business Context (5 minutes)
+## Phase 1: Introduction & How This Works (5 minutes)
 
 ### 1.1 The Business Problem
 - Frame it from a business perspective
@@ -72,15 +82,19 @@ Furniture,North America,8920.30,89,100.23
   - "Calculate inventory turnover by warehouse"
   - "Track customer acquisition cost by channel"
 
-### 1.2 Traditional Approach vs. Osiris
-- **Traditional:** Manual SQL queries, scripts, orchestration tools
-- **Osiris:** Describe intent → AI generates → Deterministic execution
-- Emphasize: "You describe WHAT, Osiris figures out HOW"
+### 1.2 The New Way: Describe → AI Executes → Results
+- **You (User):** Describe your goal in plain English to Claude Code
+- **Claude Code:** Uses Osiris to generate and execute a pipeline
+- **Osiris:** Creates deterministic, reproducible data manifests
+- **Result:** Your data processed, with full transparency
+
+**Key insight:** You won't type `osiris` commands. You'll talk to Claude, and Claude will orchestrate Osiris for you.
 
 ### 1.3 What We'll Build
 - Clear objectives
 - Input → Process → Output diagram
 - Expected outcome
+- Your role: Describe, observe, validate
 
 ---
 
@@ -145,168 +159,182 @@ Furniture,North America,8920.30,89,100.23
 ## Phase 3: Installation & Setup (15 minutes)
 
 ### 3.1 Prerequisites
+
+**MCP Client (choose one):**
+- **Claude Code** (recommended for this tutorial) - Official CLI from Anthropic
+- **Claude Desktop** - GUI application with MCP support
+- **Cursor** - AI-powered IDE with MCP integration
+- **Windsurf (Codeium)** - AI code editor
+- **Other MCP-compatible clients** - Any tool supporting Model Context Protocol
+
+**Note:** This tutorial uses Claude Code examples, but the same workflow applies to any MCP client. Just replace "ask Claude Code" with "ask your MCP client."
+
+**System Requirements:**
 - Python 3.9+ installed
 - Basic command-line familiarity
-- Text editor (VS Code, Sublime, etc.)
 
-### 3.2 Install Osiris
+### 3.2 Install Osiris as MCP Server
+
+**Clone this tutorial repository:**
 ```bash
-# Create project directory
-mkdir osiris-demo
-cd osiris-demo
+git clone https://github.com/[user]/osiris-get-started.git
+cd osiris-get-started
+```
 
+**Install Osiris:**
+```bash
 # Create virtual environment
 python3 -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install Osiris
 pip install -r requirements.txt
-# Or: pip install osiris-pipeline
+```
 
+**Configure Osiris as MCP server for Claude Code:**
+```bash
 # Initialize Osiris
-osiris init
+python -m osiris init
+
+# This creates the MCP server configuration that Claude Code can use
 ```
 
 **What happens behind the scenes:**
+- Osiris sets up as an MCP (Model Context Protocol) server
+- Claude Code can now call Osiris tools/functions
 - Creates `.osiris/` configuration directory
-- Sets up default profiles
-- Initializes logging structure
-- Creates manifest template directory
+- Sets up logging and manifest directories
 
-### 3.3 Verify Installation
-```bash
-osiris --version
-osiris --help
+### 3.3 Verify Setup with Claude Code
+
+**Open Claude Code and ask:**
 ```
+Can you check if Osiris is available?
+```
+
+**Claude will verify:**
+- Osiris MCP tools are accessible
+- Configuration is valid
+- Ready to process data pipelines
 
 ### 3.4 Project Structure
 ```
-osiris-demo/
-├── .osiris/              # Osiris configuration
+osiris-get-started/
+├── .osiris/              # Osiris configuration (MCP server)
 │   ├── config.yaml       # Global settings
 │   └── profiles/         # Environment profiles
 ├── examples/
-│   ├── data-in/          # Input data
-│   ├── data-out/         # Output results
-│   └── manifests/        # Saved pipeline definitions
+│   ├── data-in/          # Input data (provided)
+│   │   ├── sales_data.csv
+│   │   └── product_catalog.csv
+│   ├── data-out/         # Output results (generated)
+│   └── manifests/        # Pipeline definitions (generated by Osiris)
+├── docs/
+│   └── my_first_process.md  # This tutorial
 ├── .venv/                # Virtual environment
 └── requirements.txt
 ```
 
-### 3.5 Download Sample Data
-```bash
-# Create directory structure
-mkdir -p examples/data-in examples/data-out
+### 3.5 Sample Data Ready to Use
 
-# Download sample files (from this repo)
-curl -o examples/data-in/sales_data.csv https://raw.githubusercontent.com/[user]/osiris-get-started/main/examples/data-in/sales_data.csv
-curl -o examples/data-in/product_catalog.csv https://raw.githubusercontent.com/[user]/osiris-get-started/main/examples/data-in/product_catalog.csv
-```
+The repository includes sample CSV files in `examples/data-in/`:
+- `sales_data.csv` - Transaction data with intentional quality issues
+- `product_catalog.csv` - Product details
+
+**You don't need to download anything** - the data is ready for your first pipeline!
 
 ---
 
-## Phase 4: Building Your First Process (30 minutes)
+## Phase 4: Your First Process - Watch Claude Use Osiris (30 minutes)
 
-### 4.1 Start Conversational Interface
+### 4.1 Open Your MCP Client
+
+**Using Claude Code (CLI):**
 ```bash
-osiris chat
+cd osiris-get-started
+claude
 ```
 
-**What you'll see:**
-```
-Osiris Pipeline v0.4.0
-Deterministic compiler for AI-native data pipelines
+**Using Claude Desktop:**
+- Open Claude Desktop
+- Navigate to the `osiris-get-started` folder in the file browser
 
-Ready. Describe your data goal in plain English.
->
+**Using Cursor / Windsurf / Other IDE:**
+- Open the `osiris-get-started` folder as your project
+- Start a conversation with the AI assistant
+
+**The workflow is the same regardless of which client you use.**
+
+### 4.2 Describe Your Business Goal to Claude
+
+**You say to Claude:**
+```
+I need to analyze which product categories are performing best by region.
+
+I have two CSV files in examples/data-in/:
+- sales_data.csv with transactions (order_id, product_id, region, quantity, price, order_date, customer_id)
+- product_catalog.csv with product details (product_id, product_name, category, cost_price)
+
+Can you:
+1. Clean the data (remove records with missing product_id)
+2. Join sales with product catalog on product_id
+3. Calculate total revenue (quantity * price) for each order
+4. Aggregate by category and region to show: total_revenue, order_count, avg_order_value
+5. Output the results to examples/data-out/category_performance.csv
 ```
 
-### 4.2 Describe Your Goal
+**What you'll observe:**
+- Claude acknowledges your request
+- Claude mentions it will use Osiris to build a pipeline
+- Claude starts working
+
+### 4.3 Watch Claude Use Osiris
+
+**Claude's actions (visible to you):**
 ```
-> I need to analyze product category performance by region.
-> I have two CSV files: sales_data.csv with transactions (order_id,
-> product_id, region, quantity, price, order_date) and
-> product_catalog.csv with product details (product_id, product_name,
-> category, cost_price).
->
-> Please:
-> 1. Clean the data (remove records with missing product_id)
-> 2. Join sales with product catalog on product_id
-> 3. Calculate total revenue (quantity * price) for each order
-> 4. Aggregate by category and region: total_revenue, order_count, avg_order_value
-> 5. Output to examples/data-out/category_performance.csv
+I'll help you analyze category performance by region using Osiris.
+
+First, let me interrogate the data sources...
+[Claude calls Osiris MCP tools to inspect the CSV files]
+
+Found:
+- examples/data-in/sales_data.csv: 1,234 rows, 7 columns
+- examples/data-in/product_catalog.csv: 45 rows, 4 columns
+- Detected 23 rows with missing product_id in sales data
+
+Now I'll create a pipeline to process this data...
+[Claude calls Osiris to generate pipeline manifest]
+
+Pipeline created with these steps:
+1. Extract: Read both CSV files
+2. Clean: Filter out rows with null product_id
+3. Join: LEFT JOIN sales → products on product_id
+4. Compute: Calculate revenue = quantity * price
+5. Aggregate: GROUP BY category, region with SUM, COUNT, AVG
+6. Write: Output to category_performance.csv
+
+Executing pipeline...
+[Claude calls Osiris to run the pipeline]
+
+✓ Pipeline completed successfully in 1.87s
+✓ Generated 12 rows in examples/data-out/category_performance.csv
 ```
 
 **What happens behind the scenes:**
-- Osiris analyzes your request
-- Identifies data sources (CSV files)
-- Plans transformation steps
-- Determines output format
+- Claude uses Osiris MCP tool: `osiris_inspect_data()` to analyze CSV files
+- Claude uses Osiris MCP tool: `osiris_generate_pipeline()` to create manifest
+- Claude uses Osiris MCP tool: `osiris_execute_pipeline()` to run it
+- Osiris creates a deterministic, reproducible manifest
+- Osiris executes and logs everything
 
-### 4.3 Osiris Interrogates & Proposes
+### 4.4 Inspect What Claude Created
+
+**Ask Claude:**
 ```
-Interrogating data sources...
-✓ Found: examples/data-in/sales_data.csv (1,234 rows, 7 columns)
-✓ Found: examples/data-in/product_catalog.csv (45 rows, 4 columns)
-
-Analyzing data structure...
-✓ Identified join key: product_id
-⚠ Found 23 rows with missing product_id in sales_data.csv
-✓ No schema conflicts detected
-
-Proposed pipeline:
-┌──────────────────────────────────────────────────────┐
-│ Step 1: Extract                                      │
-│ - Read sales_data.csv                                │
-│ - Read product_catalog.csv                           │
-├──────────────────────────────────────────────────────┤
-│ Step 2: Clean                                        │
-│ - Filter sales: product_id IS NOT NULL              │
-│ - Result: 1,211 valid rows                          │
-├──────────────────────────────────────────────────────┤
-│ Step 3: Join                                         │
-│ - LEFT JOIN sales → products ON product_id          │
-│ - Compute: revenue = quantity * price               │
-├──────────────────────────────────────────────────────┤
-│ Step 4: Aggregate                                    │
-│ - GROUP BY: category, region                        │
-│ - SUM(revenue) AS total_revenue                     │
-│ - COUNT(*) AS order_count                           │
-│ - AVG(revenue) AS avg_order_value                   │
-├──────────────────────────────────────────────────────┤
-│ Step 5: Write                                        │
-│ - Output: examples/data-out/category_performance.csv│
-└──────────────────────────────────────────────────────┘
-
-Estimated execution time: ~2 seconds
-Estimated output: ~12 rows
-
-Approve pipeline? [Y/n/modify]
+Can you show me the manifest that was generated?
 ```
 
-### 4.4 Review & Approve
-```
-> Y
-```
-
-### 4.5 Compilation
-```
-Compiling manifest...
-✓ Generated fingerprint: 7a3f9c2e-1b4d-4e8f-9a2c-5d6e7f8a9b0c
-✓ Manifest saved: examples/manifests/category_performance_20240315_143022.yaml
-✓ Manifest is deterministic and reproducible
-```
-
-**What happens behind the scenes:**
-- Osiris creates a YAML manifest with all pipeline steps
-- Generates a unique fingerprint for reproducibility
-- Validates manifest structure
-- Saves to manifests directory
-
-### 4.6 Inspect the Manifest (Optional)
-```bash
-cat examples/manifests/category_performance_20240315_143022.yaml
-```
+**Claude will display the generated YAML manifest:**
 
 **Sample manifest structure:**
 ```yaml
@@ -386,43 +414,14 @@ execution:
   parallelism: 1
 ```
 
-### 4.7 Execute the Pipeline
-```bash
-osiris run examples/manifests/category_performance_20240315_143022.yaml
+### 4.5 Verify the Results
+
+**Ask Claude:**
+```
+Can you show me the output data?
 ```
 
-**Execution output:**
-```
-Starting pipeline execution...
-Fingerprint: 7a3f9c2e-1b4d-4e8f-9a2c-5d6e7f8a9b0c
-
-[1/5] Extracting data...
-  ✓ sales_extractor: 1,234 rows read
-  ✓ products_extractor: 45 rows read
-
-[2/5] Cleaning data...
-  ✓ clean_sales: 1,211 rows (23 filtered)
-
-[3/5] Joining datasets...
-  ✓ join_data: 1,211 rows joined
-
-[4/5] Computing revenue...
-  ✓ calculate_revenue: revenue column added
-
-[5/5] Aggregating results...
-  ✓ aggregate_results: 12 categories × regions
-
-[6/6] Writing output...
-  ✓ output_writer: examples/data-out/category_performance.csv
-
-Pipeline completed successfully in 1.87s
-```
-
-### 4.8 Verify Results
-```bash
-cat examples/data-out/category_performance.csv
-```
-
+**Claude will display:**
 ```csv
 category,region,total_revenue,order_count,avg_order_value
 Electronics,North America,15789.45,234,67.47
@@ -430,111 +429,130 @@ Electronics,Europe,12450.80,156,79.81
 Electronics,Asia Pacific,9823.10,143,68.69
 Furniture,North America,8920.30,89,100.23
 Furniture,Europe,7234.50,72,100.48
+Home & Garden,North America,6789.20,78,87.04
 ...
 ```
 
-### 4.9 View Interactive Reports
-```bash
-osiris logs html --open
+**Behind the scenes:** Claude reads `examples/data-out/category_performance.csv` and formats it for you
+
+### 4.6 Request Additional Analysis
+
+**Ask Claude:**
+```
+Which category has the highest average order value?
 ```
 
-**What opens:**
-- Interactive HTML dashboard
-- Execution timeline
-- Data flow visualization
+**Claude analyzes the data and responds:**
+```
+Based on the results, **Furniture** has the highest average order value at ~$100,
+followed by Home & Garden (~$87) and Electronics (~$72).
+
+This suggests that while Electronics has higher overall volume,
+Furniture customers make larger individual purchases.
+```
+
+**Behind the scenes:** Claude can read and analyze the generated data without re-running the pipeline
+
+### 4.7 View Execution Logs (Optional)
+
+**Ask Claude:**
+```
+Can you show me the execution logs or metrics?
+```
+
+**Claude will display:**
+- Pipeline execution time
 - Row counts at each step
-- Performance metrics
-- Error logs (if any)
+- Data quality checks performed
+- Any warnings or issues encountered
 
-### 4.10 Access AI-Readable Output
-```bash
-osiris logs aiop --last
-```
-
-**AIOP (AI Operation Package) contains:**
-- Structured execution summary
-- Data quality metrics
-- Anomaly detection results
-- LLM-friendly analysis format
+**Behind the scenes:** Claude uses Osiris MCP tool to access execution logs and AIOP (AI Operation Package) data
 
 ---
 
 ## Phase 5: Understanding What Happened (15 minutes)
 
-### 5.1 The Osiris Magic Explained
+### 5.1 The Three-Layer System
+
+**Your conversation with Claude triggered a sophisticated workflow:**
+
+```
+┌─────────────────────────────────────────┐
+│  1. YOU (User)                          │
+│  "Analyze category performance..."      │
+└──────────────┬──────────────────────────┘
+               │ Natural language
+               ▼
+┌─────────────────────────────────────────┐
+│  2. CLAUDE (MCP Client)                 │
+│  - Understands your goal                │
+│  - Calls Osiris MCP tools               │
+│  - Presents results back to you         │
+└──────────────┬──────────────────────────┘
+               │ MCP function calls
+               ▼
+┌─────────────────────────────────────────┐
+│  3. OSIRIS (Pipeline Compiler)          │
+│  - Inspects data sources                │
+│  - Generates deterministic manifest     │
+│  - Executes pipeline                    │
+│  - Returns results + logs               │
+└─────────────────────────────────────────┘
+```
 
 **Step-by-Step Breakdown:**
 
-1. **Natural Language Parsing**
-   - Your English description → Structured intent
-   - Identified: sources, operations, destination
-
-2. **Data Source Interrogation**
-   - Read file headers
-   - Inferred schema
-   - Detected data types
-   - Identified potential issues
-
-3. **Pipeline Generation**
-   - Created extraction steps
-   - Planned transformations
-   - Determined optimal join strategy
-   - Configured aggregation logic
-
-4. **Deterministic Compilation**
-   - Generated YAML manifest
-   - Created fingerprint
-   - Made reproducible
-
-5. **Execution**
-   - Loaded data into memory
-   - Applied transformations sequentially
-   - Wrote results to CSV
+1. **You describe your goal** - No code, no technical specs, just business intent
+2. **Claude interprets** - Understands what you need and decides to use Osiris
+3. **Claude calls Osiris MCP tools:**
+   - `osiris_inspect_data()` - Analyze CSV files
+   - `osiris_generate_pipeline()` - Create manifest
+   - `osiris_execute()` - Run the pipeline
+4. **Osiris compiles & executes** - Deterministic, reproducible processing
+5. **Claude presents results** - Shows you the data, analysis, and insights
 
 ### 5.2 Reproducibility Guarantee
 
-**Run it again:**
-```bash
-osiris run examples/manifests/category_performance_20240315_143022.yaml
+**The manifest Osiris created is deterministic.**
+
+**Ask Claude:**
+```
+Can you run that same analysis again?
 ```
 
-**Result:** Identical output, same fingerprint, guaranteed behavior
+**Claude will:**
+- Use the same manifest fingerprint
+- Execute with identical parameters
+- Produce exactly the same results
 
-**Run on E2B cloud:**
-```bash
-osiris run examples/manifests/category_performance_20240315_143022.yaml --e2b
-```
-
-**Result:** Same output, cloud execution, <1% overhead
+**This works anywhere:** Local machine, E2B cloud, any environment with Osiris
 
 ### 5.3 Modifying the Pipeline
 
-**Option 1: Conversational modification**
-```bash
-osiris chat --manifest examples/manifests/category_performance_20240315_143022.yaml
+**You can iterate conversationally:**
+
+**Ask Claude:**
+```
+Can you modify the analysis to only include orders from 2024 and add a filter for orders over $50?
 ```
 
-```
-> Add a filter to only include orders from 2024
-```
+**Claude will:**
+- Load the existing manifest
+- Apply your modifications
+- Generate a new manifest with updated fingerprint
+- Execute the new version
+- Show you the updated results
 
-Osiris will:
-- Load existing manifest
-- Apply your modification
-- Generate new manifest with new fingerprint
-
-**Option 2: Manual YAML editing**
-- Edit the manifest file directly
-- Add/modify steps
-- Re-run with `osiris run`
+**Or you can manually edit:** The manifest is YAML, so you can edit it directly if you prefer
 
 ### 5.4 Key Takeaways
 
-✓ **No code required** for basic pipelines
-✓ **Deterministic** - same input = same output
-✓ **Reproducible** - works everywhere identically
-✓ **Transparent** - inspect the manifest to see exactly what happens
-✓ **Flexible** - modify through conversation or YAML editing
+✓ **Conversational interface** - Describe goals in plain English
+✓ **AI orchestration** - Claude chooses when and how to use Osiris
+✓ **Deterministic execution** - Same input = same output, guaranteed
+✓ **Transparent** - Inspect manifests to see exactly what happens
+✓ **Reproducible** - Works identically everywhere
+✓ **Iterative** - Easily modify and refine through conversation
 
 ---
 
