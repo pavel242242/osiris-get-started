@@ -37,8 +37,11 @@ Describe goal to AI → Osiris compiles → Execute anywhere → Guaranteed repr
   - [Windsurf](https://codeium.com/windsurf)
   - Other MCP-compatible tools
 
-### Installation
+### Installation (Two-Session Setup)
 
+This tutorial uses a **two-session approach** for the best learning experience:
+
+**Session 1: Setup & MCP Server**
 ```bash
 # Clone this repository
 git clone https://github.com/[user]/osiris-get-started.git
@@ -48,22 +51,98 @@ cd osiris-get-started
 python3 -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-# Install dependencies
-pip install -r requirements.txt
+# Clone and install Osiris in editable mode
+git clone https://github.com/keboola/osiris.git /tmp/osiris-repo
+pip install -e /tmp/osiris-repo
 
-# Initialize Osiris as MCP server
-python -m osiris init
+# Install MCP SDK
+pip install mcp
+
+# Verify installation
+osiris --version  # Should show Osiris v0.5.0 or similar
+
+# Initialize Osiris project
+osiris init
+
+# Copy component definitions
+cp -r /tmp/osiris-repo/components .
+
+# Verify components
+osiris components list | head -5  # Should list available components
 ```
+
+**Register Osiris MCP server:**
+```bash
+claude mcp add osiris
+```
+
+This creates `.mcp.json` with the Osiris server configuration. Claude Code will auto-launch the server when needed.
+
+Alternatively, manually create `.mcp.json`:
+```json
+{
+  "mcpServers": {
+    "osiris": {
+      "command": "/bin/bash",
+      "args": [
+        "-lc",
+        "source .venv/bin/activate && python -m osiris.cli.mcp_entrypoint"
+      ]
+    }
+  }
+}
+```
+
+**Enable MCP server auto-approval:**
+
+Add to `.claude/settings.local.json`:
+```json
+{
+  "enableAllProjectMcpServers": true
+}
+```
+
+This ensures Osiris MCP server is automatically enabled in Session 2.
+
+**Session 2: Tutorial (New Terminal)**
+
+In a new terminal window, start Claude Code:
+```bash
+cd osiris-get-started
+claude
+```
+
+**Important:** When Claude Code starts, you may be prompted to approve the Osiris MCP server. Click "Allow" or "Enable".
+
+If not prompted, enable it manually in `.claude/settings.local.json`:
+```json
+{
+  "enableAllProjectMcpServers": true
+}
+```
+
+Then restart Claude Code.
 
 ### Verify Setup
 
-Open your AI assistant (Claude Code, Claude Desktop, etc.) and ask:
+Check MCP status:
+```
+/mcp
+```
+
+**Use this initial prompt in Session 2:**
 
 ```
-Can you check if Osiris is available?
+Hi! I'm going through the Osiris tutorial for building my first data pipeline.
+
+Can you:
+1. Check if Osiris MCP tools are available with /mcp
+2. Show me what Osiris tools you have access to
+
+Once verified, I'll be ready to start building the e-commerce analytics pipeline from the tutorial.
 ```
 
-You should see confirmation that Osiris MCP tools are accessible.
+You should see confirmation that Osiris MCP tools are accessible (e.g., `osiris_oml_validate`, `osiris_connections_list`, `osiris_discovery_run`, etc.).
 
 ## Tutorial
 
@@ -108,34 +187,39 @@ osiris-get-started/
 
 ## How It Works
 
+**Two-Session Architecture:**
+
 ```
-┌─────────────────┐
-│  YOU            │  "Analyze sales by category..."
-│  (Natural       │
-│   Language)     │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  CLAUDE/AI      │  Interprets goal
-│  (MCP Client)   │  Calls Osiris tools
-│                 │  Presents results
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  OSIRIS         │  Interrogates data sources
-│  (Compiler)     │  Generates deterministic manifest
-│                 │  Executes pipeline
-│                 │  Returns results + logs
-└─────────────────┘
+SESSION 1 (Setup)                    SESSION 2 (Tutorial)
+┌─────────────────┐                 ┌─────────────────┐
+│  Terminal       │                 │  YOU            │
+│  Running MCP    │◄────────────────│  (Claude Code)  │
+│  Server         │   MCP Protocol  │                 │
+└─────────────────┘                 └────────┬────────┘
+         │                                   │
+         │                                   ▼
+         │                          ┌─────────────────┐
+         │                          │  CLAUDE/AI      │
+         │                          │  (MCP Client)   │
+         │                          │  Calls Osiris   │
+         │                          └────────┬────────┘
+         │                                   │
+         └───────────────────────────────────┘
+                                             │
+                                             ▼
+                                    ┌─────────────────┐
+                                    │  OSIRIS         │
+                                    │  (Compiler)     │
+                                    │  Generates &    │
+                                    │  Executes       │
+                                    └─────────────────┘
 ```
 
-**Your role:** Describe what you need, validate results, provide feedback
+**Your role:** Describe what you need in natural language (Session 2)
 
-**AI's role:** Interpret goals, orchestrate Osiris, present insights
+**Claude's role:** Interpret goals, call Osiris MCP tools, present insights
 
-**Osiris's role:** Compile deterministic manifests, execute reproducibly
+**Osiris's role:** Compile deterministic manifests, execute reproducibly (via MCP server in Session 1)
 
 ## Key Concepts
 
