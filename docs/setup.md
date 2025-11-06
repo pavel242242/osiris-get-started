@@ -12,7 +12,6 @@ This guide will set up Osiris and the MCP server for use with Claude Code. It's 
 
 - **Python 3.11+** installed
 - **Claude Code** CLI installed ([download here](https://claude.ai/code))
-- **Git** installed
 
 Verify your Python version:
 ```bash
@@ -61,10 +60,10 @@ fi
 source .venv/bin/activate
 
 if ! command -v osiris &> /dev/null; then
-    echo "📦 Installing Osiris from PyPI..."
-    pip install --upgrade pip
+    echo "📦 Installing Osiris and MCP from PyPI..."
+    pip install -q --upgrade pip
     pip install osiris-pipeline mcp
-    echo "✅ Osiris installed"
+    echo "✅ Osiris and MCP installed"
 else
     OSIRIS_VERSION=$(osiris --version 2>&1)
     echo "✅ Osiris already installed: $OSIRIS_VERSION"
@@ -79,24 +78,12 @@ else
     echo "✅ Osiris project already initialized"
 fi
 
-# Check/Copy components (from PyPI package)
+# Check/Copy components
 if [ ! -d "components" ] || [ -z "$(ls -A components 2>/dev/null)" ]; then
     echo "📦 Copying component definitions..."
-
-    # Get components from the installed package
-    OSIRIS_PACKAGE_PATH=$(python -c "import osiris; import os; print(os.path.dirname(osiris.__file__))" 2>/dev/null)
-
-    if [ -d "$OSIRIS_PACKAGE_PATH/../components" ]; then
-        cp -r "$OSIRIS_PACKAGE_PATH/../components" .
-        echo "✅ Components copied from package"
-    else
-        echo "⚠️  Components not found in package, cloning from GitHub as fallback..."
-        if [ ! -d "/tmp/osiris-repo" ]; then
-            git clone https://github.com/keboola/osiris.git /tmp/osiris-repo
-        fi
-        cp -r /tmp/osiris-repo/components .
-        echo "✅ Components copied from repository"
-    fi
+    OSIRIS_PATH=$(python -c "import osiris, os; print(os.path.dirname(osiris.__file__))")
+    cp -r "$OSIRIS_PATH/../components" .
+    echo "✅ Components copied"
 else
     echo "✅ Components already exist"
 fi
@@ -223,13 +210,9 @@ which osiris  # Should show path in .venv/bin/
 # Activate virtual environment
 source .venv/bin/activate
 
-# Try to copy from PyPI package
-OSIRIS_PACKAGE_PATH=$(python -c "import osiris; import os; print(os.path.dirname(osiris.__file__))")
-cp -r "$OSIRIS_PACKAGE_PATH/../components" .
-
-# If that fails, clone from GitHub as fallback
-# git clone https://github.com/keboola/osiris.git /tmp/osiris-repo
-# cp -r /tmp/osiris-repo/components .
+# Copy components from installed package
+OSIRIS_PATH=$(python -c "import osiris, os; print(os.path.dirname(osiris.__file__))")
+cp -r "$OSIRIS_PATH/../components" .
 
 # Verify
 osiris components list
