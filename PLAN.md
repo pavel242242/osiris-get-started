@@ -560,33 +560,52 @@ Can you modify the analysis to only include orders from 2024 and add a filter fo
 
 ### 6.1 Working with Databases
 
-**Example: PostgreSQL source**
+**Example: Connecting to PostgreSQL via Claude**
 
-```bash
-osiris chat
+**Ask Claude:**
+```
+I need to connect to my PostgreSQL database at localhost:5432,
+database 'sales_db', and extract active orders to CSV.
+
+Can you help me set this up?
 ```
 
+**Claude will respond:**
 ```
-> Connect to my PostgreSQL database at localhost:5432, database 'sales_db',
-> read from table 'orders', and export active orders to CSV.
+I'll help you connect to your PostgreSQL database using Osiris.
+First, I need to set up credentials securely.
+
+Would you like to:
+1. Create a credential profile (recommended for reuse)
+2. Use environment variables
+3. Provide credentials for one-time use
 ```
 
-**Osiris will prompt:**
+**You respond:** "Create a profile called prod-db"
+
+**Claude will:**
+- Use Osiris MCP tools to create a profile
+- Prompt you for credentials (username, password)
+- Store them securely in `.osiris/profiles/prod-db.yaml`
+- Generate a pipeline manifest using this profile
+
+**Behind the scenes:**
+Claude calls:
+- `osiris_create_profile()` - Sets up credential storage
+- `osiris_generate_pipeline()` - Creates manifest with profile reference
+- `osiris_execute()` - Runs the extraction
+
+### 6.2 Credential Management via Claude
+
+**Ask Claude to create a profile:**
 ```
-To connect to PostgreSQL, I need credentials:
-- Username: [enter]
-- Password: [enter] (hidden)
-- Or use existing profile: [list profiles]
+Create a database profile called "prod-db" for PostgreSQL:
+- host: localhost:5432
+- database: sales_db
+- Use environment variables for username and password
 ```
 
-### 6.2 Credential Management
-
-**Create profile:**
-```bash
-osiris profile create prod-db
-```
-
-**Configure:**
+**Claude generates configuration:**
 ```yaml
 # .osiris/profiles/prod-db.yaml
 name: "prod-db"
@@ -600,7 +619,12 @@ connection:
   ssl: true
 ```
 
-**Use in manifest:**
+**Ask Claude to use the profile:**
+```
+Use the prod-db profile to extract active orders from the orders table
+```
+
+**Claude generates manifest with profile:**
 ```yaml
 extractors:
   - id: db_extractor
@@ -609,6 +633,8 @@ extractors:
     config:
       query: "SELECT * FROM orders WHERE status = 'active'"
 ```
+
+**Key point:** You describe what you need, Claude handles the Osiris configuration
 
 ### 6.3 Data Source Types
 
@@ -645,7 +671,23 @@ Osiris can write to:
 
 **Goal:** Add a custom "revenue tier" classification
 
-**Create processor file:**
+**Ask Claude:**
+```
+I need a custom processor that classifies orders into revenue tiers:
+- Low: under $50
+- Medium: $50-$200
+- High: over $200
+
+Can you help me create this?
+```
+
+**Claude will:**
+- Generate the Python code for the processor
+- Create the file `custom_processors/revenue_tier.py`
+- Register it with Osiris
+- Show you how to use it
+
+**Claude creates processor file:**
 ```python
 # custom_processors/revenue_tier.py
 
@@ -689,9 +731,19 @@ class RevenueTierProcessor(BaseProcessor):
         return True
 ```
 
-### 7.3 Register Custom Processor
+### 7.3 Register Custom Processor via Claude
 
-**Method 1: Configuration file**
+**Ask Claude:**
+```
+Register this custom processor so I can use it in my pipelines
+```
+
+**Claude will:**
+- Update `.osiris/config.yaml` to include the processor
+- Verify the registration
+- Confirm it's ready to use
+
+**Configuration Claude creates:**
 ```yaml
 # .osiris/config.yaml
 custom_components:
@@ -701,24 +753,15 @@ custom_components:
       class: "RevenueTierProcessor"
 ```
 
-**Method 2: CLI registration**
-```bash
-osiris register processor revenue_tier custom_processors/revenue_tier.py:RevenueTierProcessor
-```
-
 ### 7.4 Use Custom Processor
 
-**In conversational mode:**
-```bash
-osiris chat
+**Ask Claude:**
+```
+Use my custom revenue_tier processor to classify orders,
+then aggregate by tier and region
 ```
 
-```
-> Use my custom revenue_tier processor to classify orders,
-> then aggregate by tier and region
-```
-
-**In manifest:**
+**Claude generates manifest using your custom processor:**
 ```yaml
 processors:
   - id: classify_tiers
@@ -728,6 +771,11 @@ processors:
       low_threshold: 50
       high_threshold: 200
 ```
+
+**Behind the scenes:**
+- Claude uses `osiris_register_component()` to register your processor
+- Claude uses `osiris_generate_pipeline()` with your custom component
+- Osiris validates the processor conforms to the interface
 
 ### 7.5 Custom Extractor Example
 
@@ -874,6 +922,17 @@ pytest tests/
 
 **Scenario:** Different logic for different regions
 
+**Ask Claude:**
+```
+I need different processing for each region:
+- North America: Apply US tax rules
+- Europe: Apply VAT
+- Other regions: Use international pricing
+
+Can you set up conditional routing?
+```
+
+**Claude will create conditional pipeline:**
 ```yaml
 processors:
   - id: region_router
@@ -889,7 +948,17 @@ processors:
 
 ### 8.2 Error Handling & Data Quality
 
-**Manifest configuration:**
+**Ask Claude:**
+```
+When processing this data, if there are errors:
+1. Continue processing valid records
+2. Save error records to errors.csv
+3. Validate that product_id and order_id are not null
+4. Check that price is between 0 and 10000
+5. Ensure order_id is unique
+```
+
+**Claude configures robust error handling:**
 ```yaml
 error_handling:
   strategy: "continue"  # Options: fail, continue, skip_record
@@ -911,7 +980,13 @@ data_quality:
 
 ### 8.3 Incremental Processing
 
-**Track processed data:**
+**Ask Claude:**
+```
+This pipeline will run daily. Only process new orders since the last run,
+based on the order_date column
+```
+
+**Claude sets up incremental processing:**
 ```yaml
 extractors:
   - id: sales_extractor
@@ -926,7 +1001,13 @@ extractors:
 
 ### 8.4 Parallel Processing
 
-**Process large datasets in parallel:**
+**Ask Claude:**
+```
+This is a large dataset. Can you process it in parallel,
+splitting by region to speed it up?
+```
+
+**Claude enables parallel execution:**
 ```yaml
 execution:
   mode: "batch"
@@ -936,18 +1017,22 @@ execution:
 
 ### 8.5 Scheduled Execution
 
-**Run pipelines on schedule:**
+**Ask Claude:**
+```
+I need this pipeline to run automatically every day at 2 AM UTC
+```
+
+**Claude will:**
+- Help you set up a cron job, OR
+- Configure Osiris scheduler (v0.5+)
+
+**Cron approach:**
 ```bash
-# Using cron
-crontab -e
+# Claude provides the cron command:
+0 2 * * * cd /path/to/project && osiris run manifest.yaml
 ```
 
-```
-# Run every day at 2 AM
-0 2 * * * /path/to/osiris run /path/to/manifest.yaml
-```
-
-**Using Osiris scheduler (coming in v0.5+):**
+**Osiris scheduler (future):**
 ```yaml
 schedule:
   cron: "0 2 * * *"
@@ -956,7 +1041,16 @@ schedule:
 
 ### 8.6 Pipeline Composition
 
-**Reuse manifests as sub-pipelines:**
+**Ask Claude:**
+```
+I have two existing pipelines:
+1. clean_sales_data.yaml - cleans sales data
+2. enrich_products.yaml - adds product info
+
+Can you compose them together and add final aggregation?
+```
+
+**Claude creates composed pipeline:**
 ```yaml
 pipeline:
   sub_pipelines:
@@ -975,34 +1069,66 @@ pipeline:
 
 ## Phase 9: Troubleshooting & Best Practices (15 minutes)
 
-### 9.1 Common Issues
+### 9.1 Common Issues & How to Ask Claude for Help
 
 **Issue 1: File not found**
+
+**Tell Claude:**
 ```
-Error: FileNotFoundError: examples/data-in/sales_data.csv
+I'm getting an error: FileNotFoundError: examples/data-in/sales_data.csv
 ```
-**Solution:** Check file paths are relative to execution directory
+
+**Claude will:**
+- Check if the file exists
+- Verify the working directory
+- Suggest correcting the file path
+- Regenerate the manifest with the correct path
 
 **Issue 2: Schema mismatch**
+
+**Tell Claude:**
 ```
-Error: Column 'product_id' not found in join
+The pipeline failed with: Column 'product_id' not found in join
 ```
-**Solution:** Verify column names match exactly (case-sensitive)
+
+**Claude will:**
+- Inspect both datasets to check column names
+- Identify case-sensitivity issues
+- Show you the actual column names
+- Fix the manifest with correct column references
 
 **Issue 3: Memory errors with large files**
-```
-Error: MemoryError: Unable to allocate array
-```
-**Solution:** Use chunking or increase parallelism
 
-### 9.2 Debugging Pipelines
-
-**Enable verbose logging:**
-```bash
-osiris run manifest.yaml --verbose
+**Tell Claude:**
+```
+Pipeline crashed with MemoryError when processing large file
 ```
 
-**Inspect intermediate results:**
+**Claude will:**
+- Ask about your file size and available memory
+- Suggest chunking strategies
+- Enable parallel processing with appropriate partition size
+- Regenerate manifest with memory-efficient settings
+
+### 9.2 Debugging Pipelines via Claude
+
+**Ask Claude for verbose execution:**
+```
+Run the pipeline again with verbose logging so we can see what's happening
+```
+
+**Claude will:**
+- Execute with `--verbose` flag
+- Show you detailed logs
+- Highlight warnings or issues
+
+**Ask Claude to inspect intermediate results:**
+```
+The final output doesn't look right. Can you save intermediate results
+after each processing step so we can see where it goes wrong?
+```
+
+**Claude adds debug outputs:**
 ```yaml
 processors:
   - id: clean_sales
@@ -1011,30 +1137,86 @@ processors:
     debug_output: "debug/clean_sales.csv"
 ```
 
-**Use AIOP for analysis:**
-```bash
-osiris logs aiop --last | jq '.data_quality'
+**Ask Claude to analyze execution:**
 ```
+Show me the data quality metrics from the last run
+```
+
+**Claude will:**
+- Use Osiris AIOP (AI Operation Package) to retrieve metrics
+- Display row counts, null values, data types
+- Highlight any quality issues
 
 ### 9.3 Performance Optimization
 
-**Tips:**
-1. Use appropriate parallelism
-2. Filter early in the pipeline
-3. Avoid unnecessary joins
-4. Use columnar formats (Parquet) for large data
-5. Profile execution: `osiris run --profile`
+**Ask Claude:**
+```
+This pipeline is running slowly on a large dataset. Can you optimize it?
+```
 
-### 9.4 Best Practices
+**Claude will analyze and suggest:**
+1. **Increase parallelism** - Split processing across workers
+2. **Filter early** - Remove unnecessary data at the start
+3. **Avoid unnecessary joins** - Check if all joins are needed
+4. **Use columnar formats** - Switch to Parquet for large files
+5. **Profile execution** - Run with profiling to identify bottlenecks
 
-1. **Version control manifests:** Treat manifests as code
-2. **Use profiles for credentials:** Never hardcode secrets
-3. **Test with sample data first:** Before running on full datasets
-4. **Document business logic:** Add comments to manifests
-5. **Monitor execution:** Use HTML reports and AIOP
-6. **Validate outputs:** Check data quality after each run
-7. **Handle errors gracefully:** Use dead letter queues
-8. **Keep manifests modular:** Break complex pipelines into sub-pipelines
+**Claude can run profiling:**
+```
+osiris run manifest.yaml --profile
+```
+
+### 9.4 Best Practices (Claude Helps You Follow Them)
+
+**Ask Claude to help you maintain good practices:**
+
+1. **Version control manifests:**
+```
+Should I commit this manifest to git?
+```
+Claude will: Review the manifest, check for hardcoded secrets, suggest .gitignore entries
+
+2. **Use profiles for credentials:**
+```
+I need to add database credentials to this pipeline
+```
+Claude will: Create a profile, use environment variables, never hardcode secrets
+
+3. **Test with sample data first:**
+```
+I want to test this pipeline before running on the full dataset
+```
+Claude will: Create a test version with limited rows, validate logic, then scale up
+
+4. **Document business logic:**
+```
+Add comments to this manifest explaining the business logic
+```
+Claude will: Add clear comments describing what each step does and why
+
+5. **Monitor execution:**
+```
+Show me an execution report for the last run
+```
+Claude will: Generate HTML report, display AIOP metrics, highlight issues
+
+6. **Validate outputs:**
+```
+Check if the output data looks correct
+```
+Claude will: Inspect results, validate row counts, check for anomalies
+
+7. **Handle errors gracefully:**
+```
+What happens if some records fail validation?
+```
+Claude will: Show error handling config, explain dead letter queue, suggest improvements
+
+8. **Keep manifests modular:**
+```
+This manifest is getting complex. Can we break it into smaller pieces?
+```
+Claude will: Suggest sub-pipeline composition, create modular structure
 
 ---
 
@@ -1055,22 +1237,38 @@ osiris logs aiop --last | jq '.data_quality'
 
 ### 10.2 Where to Go Next
 
-**Documentation:**
-- [User Guide](link) - Complete reference
-- [Architecture Docs](link) - Technical deep-dive
-- [API Reference](link) - Component interfaces
-- [LLM-friendly docs](llms.txt) - For AI assistants
+**Ask Claude:**
+```
+What should I learn next about Osiris?
+```
 
-**Examples:**
-- Multi-source aggregation
-- Streaming pipelines (v0.5+)
-- ML preprocessing pipelines
-- Real-time monitoring dashboards
+**Claude can guide you to:**
+
+**Documentation:**
+- User Guide - Complete reference
+- Architecture Docs - Technical deep-dive
+- API Reference - Component interfaces
+- LLM-friendly docs (llms.txt) - For AI assistants
+
+**Advanced Examples - Ask Claude to build these with you:**
+- Multi-source aggregation across databases and APIs
+- Streaming pipelines (v0.5+) for real-time data
+- ML preprocessing pipelines for model training
+- Real-time monitoring dashboards with alerts
 
 **Community:**
 - GitHub Issues: Report bugs, request features
 - Discussions: Ask questions, share patterns
 - Contributing: Submit PRs for new components
+
+**Continue Learning with Claude:**
+```
+Show me example projects I can try
+```
+
+```
+Help me build a [customer segmentation / ad spend monitoring / churn prediction] pipeline
+```
 
 ### 10.3 Advanced Topics to Explore
 

@@ -1,0 +1,26 @@
+# Osiris Data Pipeline Compiler
+# Note: Replace with actual package name once available on PyPI
+# For now, this is a placeholder for the tutorial
+
+# Osiris core
+# osiris>=0.4.0
+
+# Dependencies (examples, may vary based on actual Osiris requirements)
+pandas>=2.0.0
+pyyaml>=6.0
+requests>=2.31.0
+
+# Optional: Database connectors
+# Uncomment as needed:
+# psycopg2-binary>=2.9.0  # PostgreSQL
+# pymongo>=4.0.0          # MongoDB
+# pymysql>=1.1.0          # MySQL
+
+# Optional: Cloud storage
+# boto3>=1.26.0           # AWS S3
+# google-cloud-storage>=2.10.0  # GCS
+# azure-storage-blob>=12.0.0    # Azure Blob
+
+# Development tools
+pytest>=7.4.0
+black>=23.0.0
