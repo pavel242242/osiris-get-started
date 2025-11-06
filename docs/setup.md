@@ -4,6 +4,8 @@ This guide will set up Osiris and the MCP server for use with Claude Code. It's 
 
 **Time to complete:** 5-10 minutes
 
+**✨ New:** Osiris is now available on [PyPI](https://pypi.org/project/osiris-pipeline/) (version 0.5.1+)! Installation is now faster and simpler with `pip install osiris-pipeline`.
+
 ---
 
 ## Prerequisites
@@ -59,18 +61,9 @@ fi
 source .venv/bin/activate
 
 if ! command -v osiris &> /dev/null; then
-    echo "📦 Installing Osiris..."
-
-    # Clone Osiris if not already cloned
-    if [ ! -d "/tmp/osiris-repo" ]; then
-        echo "   Cloning Osiris repository..."
-        git clone https://github.com/keboola/osiris.git /tmp/osiris-repo
-    fi
-
-    # Install Osiris
+    echo "📦 Installing Osiris from PyPI..."
     pip install --upgrade pip
-    pip install -e /tmp/osiris-repo
-    pip install mcp
+    pip install osiris-pipeline mcp
     echo "✅ Osiris installed"
 else
     OSIRIS_VERSION=$(osiris --version 2>&1)
@@ -86,11 +79,24 @@ else
     echo "✅ Osiris project already initialized"
 fi
 
-# Check/Copy components
+# Check/Copy components (from PyPI package)
 if [ ! -d "components" ] || [ -z "$(ls -A components 2>/dev/null)" ]; then
     echo "📦 Copying component definitions..."
-    cp -r /tmp/osiris-repo/components .
-    echo "✅ Components copied"
+
+    # Get components from the installed package
+    OSIRIS_PACKAGE_PATH=$(python -c "import osiris; import os; print(os.path.dirname(osiris.__file__))" 2>/dev/null)
+
+    if [ -d "$OSIRIS_PACKAGE_PATH/../components" ]; then
+        cp -r "$OSIRIS_PACKAGE_PATH/../components" .
+        echo "✅ Components copied from package"
+    else
+        echo "⚠️  Components not found in package, cloning from GitHub as fallback..."
+        if [ ! -d "/tmp/osiris-repo" ]; then
+            git clone https://github.com/keboola/osiris.git /tmp/osiris-repo
+        fi
+        cp -r /tmp/osiris-repo/components .
+        echo "✅ Components copied from repository"
+    fi
 else
     echo "✅ Components already exist"
 fi
@@ -166,7 +172,7 @@ Check that everything is configured:
 ```bash
 # Verify Osiris is installed
 source .venv/bin/activate
-osiris --version  # Should show: Osiris v0.5.0 or higher
+osiris --version  # Should show: Osiris v0.5.1 or higher
 
 # Verify project structure
 ls osiris.yaml pipelines/ build/ aiop/  # All should exist
@@ -214,9 +220,16 @@ which osiris  # Should show path in .venv/bin/
 
 **Solution:**
 ```bash
-# Re-copy components
-rm -rf components
-cp -r /tmp/osiris-repo/components .
+# Activate virtual environment
+source .venv/bin/activate
+
+# Try to copy from PyPI package
+OSIRIS_PACKAGE_PATH=$(python -c "import osiris; import os; print(os.path.dirname(osiris.__file__))")
+cp -r "$OSIRIS_PACKAGE_PATH/../components" .
+
+# If that fails, clone from GitHub as fallback
+# git clone https://github.com/keboola/osiris.git /tmp/osiris-repo
+# cp -r /tmp/osiris-repo/components .
 
 # Verify
 osiris components list
