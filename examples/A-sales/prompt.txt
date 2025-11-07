@@ -1,0 +1,15 @@
+I want to build a sales analysis pipeline using the data in examples/A-sales/data/.
+
+Please:
+1. Load sales_q1.csv and sales_q2.csv from examples/A-sales/data/
+2. Clean the data: handle any type issues, nulls, or duplicates
+3. Combine both datasets
+4. Calculate total revenue per category (quantity × unit_price, summed by category)
+5. Save the results to outputs/revenue_by_category.parquet
+
+Before writing the pipeline, please:
+- Ask me any clarifying questions
+- Explain what steps you'll take
+- Show me the pipeline structure
+
+Let me review and approve before you create it.

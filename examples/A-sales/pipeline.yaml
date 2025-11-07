@@ -1,0 +1,99 @@
+# Example A: Sales Revenue Analysis Pipeline
+# This is a reference implementation showing what Osiris might generate
+# when given the starter prompt with Claude
+
+name: sales_revenue_analysis
+description: Analyze quarterly sales data and calculate revenue by category
+
+steps:
+  # Step 1: Load Q1 sales data
+  - name: load_q1_sales
+    type: read_csv
+    config:
+      path: examples/A-sales/data/sales_q1.csv
+      options:
+        infer_schema: true
+        parse_dates: [order_date]
+    outputs:
+      - q1_data
+
+  # Step 2: Load Q2 sales data
+  - name: load_q2_sales
+    type: read_csv
+    config:
+      path: examples/A-sales/data/sales_q2.csv
+      options:
+        infer_schema: true
+        parse_dates: [order_date]
+    outputs:
+      - q2_data
+
+  # Step 3: Combine datasets
+  - name: combine_quarters
+    type: union
+    inputs:
+      - q1_data
+      - q2_data
+    outputs:
+      - combined_sales
+
+  # Step 4: Clean data
+  - name: clean_data
+    type: transform
+    inputs:
+      - combined_sales
+    config:
+      operations:
+        - drop_duplicates: [order_id]
+        - drop_nulls: [quantity, unit_price, category]
+        - cast:
+            quantity: int
+            unit_price: float
+    outputs:
+      - cleaned_sales
+
+  # Step 5: Calculate revenue
+  - name: calculate_revenue
+    type: transform
+    inputs:
+      - cleaned_sales
+    config:
+      operations:
+        - add_column:
+            name: revenue
+            expression: "quantity * unit_price"
+    outputs:
+      - sales_with_revenue
+
+  # Step 6: Aggregate by category
+  - name: aggregate_by_category
+    type: aggregate
+    inputs:
+      - sales_with_revenue
+    config:
+      group_by: [category]
+      aggregations:
+        total_revenue:
+          column: revenue
+          function: sum
+        order_count:
+          column: order_id
+          function: count
+    outputs:
+      - revenue_by_category
+
+  # Step 7: Write output
+  - name: write_output
+    type: write_parquet
+    inputs:
+      - revenue_by_category
+    config:
+      path: outputs/revenue_by_category.parquet
+      options:
+        compression: snappy
+
+# Expected output schema
+output_schema:
+  category: string
+  total_revenue: float
+  order_count: int
