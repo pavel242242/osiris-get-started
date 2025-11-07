@@ -21,8 +21,8 @@ First, clone this getting started repository to your local machine:
 
 ```bash
 cd ~
-git clone https://github.com/pavel242242/osiris-getting-started
-cd osiris-getting-started
+git clone https://github.com/pavel242242/osiris-get-started
+cd osiris-get-started
 ```
 
 This repository contains:
@@ -31,7 +31,7 @@ This repository contains:
 - Example pipeline configurations
 - Documentation and guides
 
-All the following steps assume you're working inside this cloned `osiris-getting-started` directory.
+All the following steps assume you're working inside this cloned `osiris-get-started` directory.
 
 ---
 
@@ -70,10 +70,10 @@ If none of these work, you'll need to install Python 3.11+:
 
 Virtual environments keep your Python packages isolated and prevent conflicts. This step is **required** for Osiris.
 
-You should already be in the `osiris-getting-started` directory from step 1. If not, navigate there now:
+You should already be in the `osiris-get-started` directory from step 1. If not, navigate there now:
 
 ```bash
-cd osiris-getting-started
+cd osiris-get-started
 ```
 
 Now create the virtual environment using the Python version you confirmed above:
@@ -140,7 +140,7 @@ Before we connect to Claude, let's understand where Osiris stores its data.
 **Default location**: `~/.osiris` (in your home directory)
 
 **For this tutorial**, we use the cloned repository location:
-- `OSIRIS_HOME=~/osiris-getting-started`
+- `OSIRIS_HOME=~/osiris-get-started`
 
 This allows Osiris to use **relative paths** to access the sample data in the `examples/` directory.
 
@@ -197,7 +197,7 @@ If the file is **empty or new**, use this:
       "command": "osiris",
       "args": ["mcp"],
       "env": {
-        "OSIRIS_HOME": "~/osiris-getting-started"
+        "OSIRIS_HOME": "~/osiris-get-started"
       }
     }
   }
@@ -216,7 +216,7 @@ If the file **already has content**, add the `"osiris"` entry inside the existin
       "command": "osiris",
       "args": ["mcp"],
       "env": {
-        "OSIRIS_HOME": "~/osiris-getting-started"
+        "OSIRIS_HOME": "~/osiris-get-started"
       }
     }
   }
@@ -335,7 +335,7 @@ Head over to **[Example A: Sales Analysis](examples/A-sales/)** to:
 
 **Problem**: `(.venv)` doesn't appear in your prompt
 - Make sure you ran: `source .venv/bin/activate`
-- Check you're in the right directory: `pwd` should show `osiris-getting-started`
+- Check you're in the right directory: `pwd` should show `osiris-get-started`
 - Try deactivating first: `deactivate`, then activate again
 
 ### Osiris Command Not Found
@@ -366,8 +366,8 @@ Head over to **[Example A: Sales Analysis](examples/A-sales/)** to:
 
 **Problem**: Osiris can't find data files
 - Verify OSIRIS_HOME is set correctly in MCP config
-- Use absolute paths instead of `~`: `/Users/yourname/osiris-getting-started`
-- Check the directory exists: `ls ~/osiris-getting-started`
+- Use absolute paths instead of `~`: `/Users/yourname/osiris-get-started`
+- Check the directory exists: `ls ~/osiris-get-started`
 - For Claude Code, make sure you opened the workspace folder, not just a file
 
 ### Still Having Issues?
