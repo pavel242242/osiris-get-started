@@ -128,7 +128,7 @@ With your virtual environment active, first upgrade pip, then install Osiris:
 pip install --upgrade pip
 
 # Install Osiris
-pip install osiris-pipeline
+pip install osiris-pipeline mcp
 ```
 
 This will download and install Osiris and all its dependencies.
