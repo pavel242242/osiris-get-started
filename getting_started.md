@@ -54,6 +54,8 @@ If you have an older version, you might have multiple Python versions installed:
 # Try checking for specific versions
 python3.11 --version
 python3.12 --version
+python3.13 --version
+python3.14 --version
 ```
 
 If none of these work, you'll need to install Python 3.11+:
