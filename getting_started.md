@@ -1,6 +1,6 @@
 # Getting Started with Osiris
 
-Welcome! This guide will walk you through installing Osiris and setting it up to work with Claude Desktop or Claude Code. By the end (about 5-7 minutes), you'll be ready to build your first AI-native data pipeline.
+Welcome! This guide will walk you through installing Osiris and setting it up to work with Claude Desktop or Claude Code. By the end (under 10 minutes), you'll be ready to build your first AI-native data pipeline.
 
 ## What You'll Do
 
@@ -17,7 +17,18 @@ Let's get started!
 
 ## 1. Clone the Tutorial Repository
 
-First, clone this getting started repository to your local machine:
+First, make sure git is installed:
+
+```bash
+# Check if git is installed
+git --version
+```
+
+If git is not installed:
+- **macOS**: `brew install git`
+- **Linux**: `sudo apt install git` (Ubuntu/Debian) or `sudo yum install git` (RedHat/CentOS)
+
+Now clone this getting started repository to your local machine:
 
 ```bash
 cd ~
@@ -48,14 +59,12 @@ python3 --version
 
 If you see `Python 3.11.x` or `Python 3.12.x` or higher, you're good to go!
 
-If you have an older version, you might have multiple Python versions installed:
+If you have an older version, you might have multiple Python versions installed. Try checking for specific versions:
 
 ```bash
-# Try checking for specific versions
 python3.11 --version
 python3.12 --version
 python3.13 --version
-python3.14 --version
 ```
 
 If none of these work, you'll need to install Python 3.11+:
@@ -72,10 +81,10 @@ If none of these work, you'll need to install Python 3.11+:
 
 Virtual environments keep your Python packages isolated and prevent conflicts. This step is **required** for Osiris.
 
-You should already be in the `osiris-get-started` directory from step 1. If not, navigate there now:
+First, make sure you're in the `osiris-get-started` directory:
 
 ```bash
-cd osiris-get-started
+cd ~/osiris-get-started
 ```
 
 Now create the virtual environment using the Python version you confirmed above:
@@ -101,13 +110,24 @@ source .venv/bin/activate
 
 You should see `(.venv)` appear at the start of your terminal prompt. This confirms the virtual environment is active.
 
+To verify you're using the correct Python:
+
+```bash
+which python
+# Should show: /Users/yourname/osiris-get-started/.venv/bin/python
+```
+
 **Tip**: If you close your terminal and come back later, remember to run `source .venv/bin/activate` again!
 
 ### Step 3.3: Install Osiris
 
-With your virtual environment active, install Osiris:
+With your virtual environment active, first upgrade pip, then install Osiris:
 
 ```bash
+# Upgrade pip to the latest version
+pip install --upgrade pip
+
+# Install Osiris
 pip install osiris-pipeline
 ```
 
@@ -118,12 +138,12 @@ This will download and install Osiris and all its dependencies.
 Let's confirm everything is working:
 
 ```bash
-# Check the version
+# Check the version and help
 osiris --version
-
+osiris --help
 ```
 
-If both commands work without errors, you're ready to move on!
+If these commands work without errors, you're ready to move on!
 
 ---
 
@@ -139,18 +159,9 @@ Before we connect to Claude, let's understand where Osiris stores its data.
 
 **Default location**: `~/.osiris` (in your home directory)
 
-**For this tutorial**, we use the cloned repository location:
-- `OSIRIS_HOME=~/osiris-get-started`
+**For this tutorial**, we'll set `OSIRIS_HOME` to point to `~/osiris-get-started`. This allows Osiris to find your sample data in the `examples/` directory.
 
-This allows Osiris to use **relative paths** to access the sample data in the `examples/` directory.
-
-You can set this in several ways:
-1. In a `.env` file (we provide `.env.example` as a template)
-2. As an environment variable in your shell
-3. In your MCP server configuration (covered next)
-4. Using the `--home` flag with Osiris commands
-
-For now, we'll configure it in the MCP setup.
+We'll configure this in the next step (MCP setup).
 
 ---
 
@@ -186,18 +197,25 @@ You can edit this file directly, or access it through the app:
 
 #### Add Osiris Configuration
 
+First, get your absolute path to osiris-get-started:
+
+```bash
+# Run this command and copy the output:
+echo "$HOME/osiris-get-started"
+```
+
 Open the configuration file in your favorite text editor and add the Osiris server configuration.
 
-If the file is **empty or new**, use this:
+If the file is **empty or new**, use this (replace `/Users/USERNAME/osiris-get-started` with your path from above):
 
 ```json
 {
   "mcpServers": {
     "osiris": {
       "command": "osiris",
-      "args": ["mcp"],
+      "args": ["mcp", "run"],
       "env": {
-        "OSIRIS_HOME": "~/osiris-get-started"
+        "OSIRIS_HOME": "/Users/USERNAME/osiris-get-started"
       }
     }
   }
@@ -214,14 +232,16 @@ If the file **already has content**, add the `"osiris"` entry inside the existin
     },
     "osiris": {
       "command": "osiris",
-      "args": ["mcp"],
+      "args": ["mcp", "run"],
       "env": {
-        "OSIRIS_HOME": "~/osiris-get-started"
+        "OSIRIS_HOME": "/Users/USERNAME/osiris-get-started"
       }
     }
   }
 }
 ```
+
+**Important**: Replace `/Users/USERNAME/osiris-get-started` with the actual path you got from the `echo` command above.
 
 #### Restart Claude Desktop
 
@@ -246,22 +266,41 @@ Claude Code v2 provides two ways to add MCP servers: an interactive CLI command 
 
 #### Method 1: Interactive CLI (Recommended)
 
-The easiest way is to use the built-in command:
+The easiest way is to use the built-in command.
+
+First, get your absolute path:
+
+```bash
+# Run this and copy the output:
+echo "$HOME/osiris-get-started"
+```
+
+Now in Claude Code:
 
 1. Open VS Code with Claude Code extension installed
 2. Open this tutorial repository as your workspace
 3. Open the Claude Code panel
 4. Type:
    ```
-   claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=~/osiris-get-started
+   claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=/Users/USERNAME/osiris-get-started
    ```
+5. Replace `/Users/USERNAME/osiris-get-started` with your actual path from the `echo` command above
 
 #### Method 2: Manual Configuration
 
-Alternatively, you can manually create the configuration file:
+Alternatively, you can manually create the configuration file.
+
+First, get your absolute path:
+
+```bash
+# Run this and copy the output:
+echo "$HOME/osiris-get-started"
+```
+
+Now create the config:
 
 1. In your workspace, create `.claude/config.json` (if it doesn't exist)
-2. Add the following configuration:
+2. Add the following configuration (replace `/Users/USERNAME/osiris-get-started` with your path):
 
 ```json
 {
@@ -270,18 +309,19 @@ Alternatively, you can manually create the configuration file:
       "command": "osiris",
       "args": ["mcp", "run"],
       "env": {
-        "OSIRIS_HOME": "~/osiris-get-started"
+        "OSIRIS_HOME": "/Users/USERNAME/osiris-get-started"
       }
     }
   }
 }
 ```
 
-**Note**: The OSIRIS_HOME should point to your workspace folder with virtual environment in .venv.
-
 #### Restart/Reload Window
 
-After configuration, start a new Claude Code session in the terminal.
+After configuration:
+1. Open VS Code Command Palette: `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Linux)
+2. Type "Developer: Reload Window" and select it
+3. Or close and reopen VS Code
 
 #### Verify Connection
 
@@ -337,8 +377,10 @@ Head over to **[Example A: Sales Analysis](examples/A-sales/)** to:
 
 **Problem**: `osiris: command not found` after installation
 - Make sure virtual environment is active (you should see `(.venv)`)
+- Check if osiris is installed: `which osiris` (should show path in `.venv/bin/`)
+- Upgrade pip first: `pip install --upgrade pip`
 - Try reinstalling: `pip install --upgrade osiris-pipeline`
-- Check installation: `pip list | grep osiris`
+- Verify: `pip list | grep osiris`
 
 ### MCP Not Connecting (Claude Desktop)
 
@@ -352,22 +394,24 @@ Head over to **[Example A: Sales Analysis](examples/A-sales/)** to:
 
 **Problem**: `/mcp` doesn't show osiris
 - Verify `.claude/config.json` exists in your workspace
-- Check JSON syntax is valid
+- Check JSON syntax is valid (no trailing commas, proper quotes)
+- Verify osiris command works: Open terminal in VS Code and run `which osiris`
 - Reload the VS Code window: Cmd+Shift+P → "Developer: Reload Window"
-- Make sure virtual environment is active before starting Claude Code
-- Check the MCP server logs in the output panel
+- Check the MCP server logs in the VS Code output panel for errors
 
 ### OSIRIS_HOME Issues
 
 **Problem**: Osiris can't find data files
 - Verify OSIRIS_HOME is set correctly in MCP config
-- Use absolute paths instead of `~`: `/Users/yourname/osiris-get-started`
+- **Don't use `~` in JSON configs** - use absolute paths instead
+- Get your absolute path: Run `echo "$HOME/osiris-get-started"` and use that value
+- Example: `/Users/yourname/osiris-get-started` not `~/osiris-get-started`
 - Check the directory exists: `ls ~/osiris-get-started`
 - For Claude Code, make sure you opened the workspace folder, not just a file
 
 ### Still Having Issues?
 
-- Run `osiris doctor` to check your installation
+- Run `osiris --help` to verify the command works
 - Check [GitHub Issues](https://github.com/keboola/osiris/issues) for known problems
 - Open a new issue with your error message and setup details
 

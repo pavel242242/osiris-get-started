@@ -1,6 +1,6 @@
 # Osiris - Getting Started
 
-Welcome to the Osiris Getting Started tutorial! This repository will help you quickly learn how to build AI-native data pipelines with Osiris.
+Welcome to the Osiris Getting Started tutorial! Get started in under 10 minutes and learn how to build AI-native data pipelines with Osiris.
 
 ## What is Osiris?
 
@@ -37,7 +37,6 @@ This tutorial includes:
 
 ## Support
 
-- [Osiris Documentation](https://docs.keboola.com)
 - [GitHub Issues](https://github.com/keboola/osiris/issues)
 
 ---
