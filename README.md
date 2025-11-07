@@ -19,7 +19,7 @@ Build production-ready data pipelines using **Osiris** - a deterministic data pi
 
 ```bash
 # Clone this repository
-git clone https://github.com/pavel242242/osiris-get-started.git
+git clone https://github.com/pavel242242/osiris-get-started
 cd osiris-get-started
 
 # Follow the idempotent setup guide
