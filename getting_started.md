@@ -253,11 +253,6 @@ The easiest way is to use the built-in command:
    ```
    claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=~/osiris-get-started
    ```
-5. Follow the interactive prompts:
-   - Name: `osiris`
-   - Command: `osiris`
-   - Args: `mcp`
-   - Environment variables: Add `OSIRIS_HOME` with value `${workspaceFolder}`
 
 #### Method 2: Manual Configuration
 
@@ -271,16 +266,16 @@ Alternatively, you can manually create the configuration file:
   "mcpServers": {
     "osiris": {
       "command": "osiris",
-      "args": ["mcp"],
+      "args": ["mcp", "run"],
       "env": {
-        "OSIRIS_HOME": "${workspaceFolder}"
+        "OSIRIS_HOME": "~/osiris-get-started"
       }
     }
   }
 }
 ```
 
-**Note**: The OSIRIS_HOME should point to your workspace folder (Claude Code will resolve `${workspaceFolder}` automatically).
+**Note**: The OSIRIS_HOME should point to your workspace folder with virtual environment in .venv.
 
 #### Restart/Reload Window
 
