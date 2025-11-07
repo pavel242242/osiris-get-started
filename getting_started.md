@@ -251,7 +251,7 @@ The easiest way is to use the built-in command:
 3. Open the Claude Code panel
 4. Type:
    ```
-   claude mcp add
+   claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=~/osiris-get-started
    ```
 5. Follow the interactive prompts:
    - Name: `osiris`
