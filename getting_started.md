@@ -157,8 +157,6 @@ Before we connect to Claude, let's understand where Osiris stores its data.
 - Execution logs
 - Output data
 
-**Default location**: `~/.osiris` (in your home directory)
-
 **For this tutorial**, we'll set `OSIRIS_HOME` to point to `~/osiris-get-started`. This allows Osiris to find your sample data in the `examples/` directory.
 
 We'll configure this in the next step (MCP setup).
