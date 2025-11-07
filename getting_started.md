@@ -119,8 +119,6 @@ Let's confirm everything is working:
 # Check the version
 osiris --version
 
-# Run diagnostics
-osiris doctor
 ```
 
 If both commands work without errors, you're ready to move on!
