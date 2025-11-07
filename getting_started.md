@@ -258,7 +258,7 @@ If you don't see it, check the **[Troubleshooting](#troubleshooting)** section b
 
 ---
 
-### Option B: Claude Code v2
+### Option B: Claude Code
 
 Claude Code provides two ways to add MCP servers: an interactive CLI command or manual configuration. Make sure you have the latest version of Claude Code.
 
