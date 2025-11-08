@@ -1,0 +1,27 @@
+I want to build a logistics data transformation pipeline (bronze to gold) using the data in examples/C-logistics/data/.
+
+Please create a multi-layer transformation:
+
+Bronze layer (raw data):
+1. Load shipments_raw.csv, customers_raw.csv, and shipping_costs.csv
+
+Silver layer (cleaned & joined):
+2. Clean shipments: remove cancelled shipments, validate dates
+3. Join shipments with customers to get customer details
+4. Calculate weight tier for each shipment (0-20, 20-30, 30+)
+
+Gold layer (business metrics):
+5. Join with shipping costs based on carrier and weight tier
+6. Calculate actual shipping cost for each shipment
+7. Aggregate metrics by customer: total shipments, total weight, total cost, avg cost per shipment
+8. Filter to active customers only
+
+Output:
+- Save gold layer results to outputs/customer_shipping_metrics.parquet
+
+Before writing the pipeline, please:
+- Ask me any clarifying questions
+- Explain the bronze-silver-gold approach
+- Show me the pipeline structure
+
+Let me review and approve before you create it.

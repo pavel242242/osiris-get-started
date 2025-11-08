@@ -20,13 +20,15 @@ The guide covers:
 This tutorial includes:
 - **Complete installation guide** with MCP setup for Claude Desktop and Claude Code v2
 - **Example A: Sales Pipeline** - Clean, join, and aggregate CSV data
+- **Example B: Co-actor Network** - Join datasets and build relationship networks
+- **Example C: Bronze to Gold** - Multi-layer transformations with medallion architecture
 - **Troubleshooting** - Common issues and solutions
 
 ## Examples
 
 - **[Example A: Sales Analysis](examples/A-sales/)** - Transform quarterly sales CSVs into aggregated revenue reports
-- **Example B: Movie Co-actors** *(coming soon)* - Build a co-actor network from Postgres data
-- **Example C: Logistics Bronze to Gold** *(coming soon)* - Multi-layer data transformation pipeline
+- **[Example B: Movie Co-actors](examples/B-movies/)** - Build a co-actor network from movie cast data
+- **[Example C: Logistics Bronze to Gold](examples/C-logistics/)** - Multi-layer data transformation pipeline
 
 ## Prerequisites
 

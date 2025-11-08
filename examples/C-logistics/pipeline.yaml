@@ -1,0 +1,178 @@
+# Example C: Logistics Bronze to Gold Pipeline
+# This is a reference implementation showing what Osiris might generate
+# when given the starter prompt with Claude
+
+name: logistics_bronze_to_gold
+description: Multi-layer transformation from raw logistics data to business metrics
+
+steps:
+  # ========================================
+  # BRONZE LAYER: Load raw data
+  # ========================================
+
+  - name: load_shipments_bronze
+    type: read_csv
+    config:
+      path: examples/C-logistics/data/shipments_raw.csv
+      options:
+        infer_schema: true
+        parse_dates: [order_date]
+    outputs:
+      - shipments_bronze
+
+  - name: load_customers_bronze
+    type: read_csv
+    config:
+      path: examples/C-logistics/data/customers_raw.csv
+      options:
+        infer_schema: true
+        parse_dates: [registration_date]
+    outputs:
+      - customers_bronze
+
+  - name: load_shipping_costs_bronze
+    type: read_csv
+    config:
+      path: examples/C-logistics/data/shipping_costs.csv
+      options:
+        infer_schema: true
+    outputs:
+      - shipping_costs_bronze
+
+  # ========================================
+  # SILVER LAYER: Clean and join
+  # ========================================
+
+  - name: clean_shipments
+    type: transform
+    inputs:
+      - shipments_bronze
+    config:
+      operations:
+        - filter: "status != 'cancelled'"
+        - drop_nulls: [shipment_id, customer_id, weight_kg]
+        - cast:
+            weight_kg: float
+    outputs:
+      - shipments_silver
+
+  - name: add_weight_tier
+    type: transform
+    inputs:
+      - shipments_silver
+    config:
+      operations:
+        - add_column:
+            name: weight_tier
+            expression: |
+              case
+                when weight_kg <= 20 then '0-20'
+                when weight_kg <= 30 then '20-30'
+                else '30+'
+              end
+    outputs:
+      - shipments_with_tier
+
+  - name: join_shipments_customers
+    type: join
+    inputs:
+      - shipments_with_tier
+      - customers_bronze
+    config:
+      on: [customer_id]
+      how: inner
+    outputs:
+      - shipments_customer_silver
+
+  # ========================================
+  # GOLD LAYER: Business metrics
+  # ========================================
+
+  - name: join_shipping_costs
+    type: join
+    inputs:
+      - shipments_customer_silver
+      - shipping_costs_bronze
+    config:
+      on: [carrier, weight_tier]
+      how: inner
+    outputs:
+      - shipments_with_costs
+
+  - name: calculate_shipping_cost
+    type: transform
+    inputs:
+      - shipments_with_costs
+    config:
+      operations:
+        - add_column:
+            name: shipping_cost
+            expression: "base_cost + (weight_kg * cost_per_kg)"
+    outputs:
+      - shipments_full
+
+  - name: filter_active_customers
+    type: transform
+    inputs:
+      - shipments_full
+    config:
+      operations:
+        - filter: "account_status = 'active'"
+    outputs:
+      - shipments_active
+
+  - name: aggregate_customer_metrics
+    type: aggregate
+    inputs:
+      - shipments_active
+    config:
+      group_by: [customer_id, customer_name, customer_type]
+      aggregations:
+        total_shipments:
+          column: shipment_id
+          function: count
+        total_weight_kg:
+          column: weight_kg
+          function: sum
+        total_shipping_cost:
+          column: shipping_cost
+          function: sum
+        avg_cost_per_shipment:
+          column: shipping_cost
+          function: avg
+    outputs:
+      - customer_metrics_gold
+
+  - name: sort_by_cost
+    type: transform
+    inputs:
+      - customer_metrics_gold
+    config:
+      operations:
+        - sort: [total_shipping_cost]
+          descending: true
+    outputs:
+      - customer_metrics_sorted
+
+  # ========================================
+  # OUTPUT
+  # ========================================
+
+  - name: write_gold_output
+    type: write_parquet
+    inputs:
+      - customer_metrics_sorted
+    config:
+      path: outputs/customer_shipping_metrics.parquet
+      options:
+        compression: snappy
+
+# Expected output schema
+output_schema:
+  customer_id: string
+  customer_name: string
+  customer_type: string
+  total_shipments: int
+  total_weight_kg: float
+  total_shipping_cost: float
+  avg_cost_per_shipment: float

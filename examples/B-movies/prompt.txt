@@ -1,0 +1,17 @@
+I want to build a co-actor network analysis pipeline using the data in examples/B-movies/data/.
+
+Please:
+1. Load movies.csv and cast.csv from examples/B-movies/data/
+2. Join the datasets to get movie-actor relationships
+3. Create a co-actor matrix showing how many times each pair of actors appeared together
+4. Calculate co-actor frequency (number of shared movies)
+5. Save the results to outputs/coactor_network.parquet
+
+The output should have columns: actor1, actor2, movies_together
+
+Before writing the pipeline, please:
+- Ask me any clarifying questions
+- Explain what steps you'll take
+- Show me the pipeline structure
+
+Let me review and approve before you create it.

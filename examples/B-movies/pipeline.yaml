@@ -1,0 +1,119 @@
+# Example B: Movie Co-actors Network Pipeline
+# This is a reference implementation showing what Osiris might generate
+# when given the starter prompt with Claude
+
+name: movie_coactors_network
+description: Build a co-actor network from movie cast data
+
+steps:
+  # Step 1: Load movies data
+  - name: load_movies
+    type: read_csv
+    config:
+      path: examples/B-movies/data/movies.csv
+      options:
+        infer_schema: true
+    outputs:
+      - movies_data
+
+  # Step 2: Load cast data
+  - name: load_cast
+    type: read_csv
+    config:
+      path: examples/B-movies/data/cast.csv
+      options:
+        infer_schema: true
+    outputs:
+      - cast_data
+
+  # Step 3: Join movies and cast
+  - name: join_movie_cast
+    type: join
+    inputs:
+      - movies_data
+      - cast_data
+    config:
+      on: [movie_id]
+      how: inner
+    outputs:
+      - movie_cast
+
+  # Step 4: Self-join to create actor pairs
+  - name: create_actor_pairs
+    type: join
+    inputs:
+      - movie_cast
+      - movie_cast
+    config:
+      on: [movie_id]
+      how: inner
+      suffix: [_1, _2]
+    outputs:
+      - actor_pairs_raw
+
+  # Step 5: Filter and clean pairs
+  - name: filter_pairs
+    type: transform
+    inputs:
+      - actor_pairs_raw
+    config:
+      operations:
+        - filter: "actor_name_1 < actor_name_2"  # Avoid duplicates and self-pairs
+        - select: [actor_name_1, actor_name_2, movie_id]
+    outputs:
+      - valid_pairs
+
+  # Step 6: Count co-appearances
+  - name: aggregate_coactors
+    type: aggregate
+    inputs:
+      - valid_pairs
+    config:
+      group_by: [actor_name_1, actor_name_2]
+      aggregations:
+        movies_together:
+          column: movie_id
+          function: count_distinct
+    outputs:
+      - coactor_network
+
+  # Step 7: Rename for clarity
+  - name: rename_columns
+    type: transform
+    inputs:
+      - coactor_network
+    config:
+      operations:
+        - rename:
+            actor_name_1: actor1
+            actor_name_2: actor2
+    outputs:
+      - final_network
+
+  # Step 8: Sort by frequency
+  - name: sort_results
+    type: transform
+    inputs:
+      - final_network
+    config:
+      operations:
+        - sort: [movies_together]
+          descending: true
+    outputs:
+      - sorted_network
+
+  # Step 9: Write output
+  - name: write_output
+    type: write_parquet
+    inputs:
+      - sorted_network
+    config:
+      path: outputs/coactor_network.parquet
+      options:
+        compression: snappy
+
+# Expected output schema
+output_schema:
+  actor1: string
+  actor2: string
+  movies_together: int

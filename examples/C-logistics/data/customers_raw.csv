@@ -1,0 +1,9 @@
+customer_id,customer_name,customer_type,registration_date,account_status,credit_limit
+C101,Acme Corp,enterprise,2023-01-15,active,50000
+C102,Best Buy LLC,enterprise,2023-02-20,active,75000
+C103,Corner Store,small_business,2023-03-10,active,10000
+C104,Delta Industries,enterprise,2023-04-05,active,100000
+C105,Echo Retail,small_business,2023-05-12,active,15000
+C106,Fusion Co,enterprise,2023-06-18,active,60000
+C107,Global Goods,small_business,2023-07-22,inactive,5000
+C108,Harbor Trading,enterprise,2023-08-30,active,80000

@@ -1,0 +1,13 @@
+shipment_id,order_date,customer_id,origin,destination,weight_kg,status,carrier,tracking_number
+SH001,2024-01-15,C101,New York,Los Angeles,25.5,delivered,FedEx,FDX123456
+SH002,2024-01-16,C102,Chicago,Miami,15.2,delivered,UPS,UPS789012
+SH003,2024-01-17,C103,Seattle,Boston,32.1,in_transit,DHL,DHL345678
+SH004,2024-01-18,C101,Dallas,Atlanta,18.7,delivered,FedEx,FDX234567
+SH005,2024-01-19,C104,Phoenix,Denver,22.3,delivered,UPS,UPS890123
+SH006,2024-01-20,C105,Portland,Houston,28.9,in_transit,FedEx,FDX345678
+SH007,2024-01-21,C102,San Francisco,New York,35.4,delivered,DHL,DHL456789
+SH008,2024-01-22,C106,Austin,Seattle,19.8,delivered,UPS,UPS901234
+SH009,2024-01-23,C103,Boston,Chicago,24.6,cancelled,FedEx,FDX456789
+SH010,2024-01-24,C107,Miami,Portland,31.2,delivered,DHL,DHL567890
+SH011,2024-01-25,C101,Los Angeles,Dallas,27.3,delivered,FedEx,FDX567890
+SH012,2024-01-26,C108,Denver,Phoenix,16.5,in_transit,UPS,UPS012345
