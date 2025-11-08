@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "osiris": {
+      "type": "stdio",
+      "command": "/home/user/osiris-get-started/.venv/bin/osiris",
+      "args": ["mcp", "run"],
+      "env": {
+        "OSIRIS_HOME": "/home/user/osiris-get-started"
+      }
+    }
+  }
+}
