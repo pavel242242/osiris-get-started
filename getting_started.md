@@ -284,6 +284,7 @@ Replace `/Users/USERNAME/osiris-get-started` with your actual path from the `ech
 
 2. Open this tutorial repository as your workspace
 4. Check MCP in Claude Code window with ```\mcp```
+5. Look for **"osiris"** in the list with a connected status
 
 ##### In terminal
 
@@ -299,53 +300,7 @@ Replace `/Users/USERNAME/osiris-get-started` with your actual path from the `ech
    claude
    ```
 3. Check available servers with ```\mcp``` command
-
-#### Method 2: Manual Configuration
-
-Alternatively, you can manually create the configuration file.
-
-First, get your absolute path:
-
-```bash
-# Run this and copy the output:
-echo "$HOME/osiris-get-started"
-```
-
-Now create the config:
-
-1. In your workspace, create `.claude/config.json` (if it doesn't exist)
-2. Add the following configuration (replace `/Users/USERNAME/osiris-get-started` with your path):
-
-```json
-{
-  "mcpServers": {
-    "osiris": {
-      "command": "osiris",
-      "args": ["mcp", "run"],
-      "env": {
-        "OSIRIS_HOME": "/Users/USERNAME/osiris-get-started"
-      }
-    }
-  }
-}
-```
-
-#### Restart/Reload Window
-
-After configuration:
-1. Open VS Code Command Palette: `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Linux)
-2. Type "Developer: Reload Window" and select it
-3. Or close and reopen VS Code
-
-#### Verify Connection
-
-After reloading:
-1. In the Claude Code panel, type:
-   ```
-   /mcp
-   ```
-2. You should see a list of connected MCP servers
-3. Look for **"osiris"** in the list with a connected status
+4. Look for **"osiris"** in the list with a connected status
 
 If you don't see it, check the **[Troubleshooting](#troubleshooting)** section below.
 
