@@ -37,6 +37,8 @@ env/
 .osiris/
 *.plan
 osiris-home/
+run_logs/
+aiop/
 
 # Environment files
 .env

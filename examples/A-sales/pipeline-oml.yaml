@@ -1,0 +1,76 @@
+oml_version: "0.1.0"
+name: sales-revenue-analysis
+description: Analyze quarterly sales data and calculate revenue by category
+
+steps:
+  # Step 1: Load Q1 sales data
+  - id: extract-q1-sales
+    component: filesystem.csv_extractor
+    mode: read
+    config:
+      path: examples/A-sales/data/sales_q1.csv
+      header: true
+      delimiter: ","
+      encoding: "utf-8"
+
+  # Step 2: Load Q2 sales data
+  - id: extract-q2-sales
+    component: filesystem.csv_extractor
+    mode: read
+    config:
+      path: examples/A-sales/data/sales_q2.csv
+      header: true
+      delimiter: ","
+      encoding: "utf-8"
+
+  # Step 3: Combine, clean, calculate revenue, and aggregate
+  - id: transform-and-aggregate
+    component: duckdb.processor
+    mode: transform
+    needs: ["extract-q1-sales", "extract-q2-sales"]
+    config:
+      query: |
+        WITH combined AS (
+          SELECT * FROM "df_extract_q1_sales"
+          UNION ALL
+          SELECT * FROM "df_extract_q2_sales"
+        ),
+        cleaned AS (
+          SELECT DISTINCT
+            order_id,
+            order_date,
+            product_name,
+            category,
+            CAST(quantity AS INTEGER) as quantity,
+            CAST(unit_price AS DOUBLE) as unit_price,
+            region,
+            customer_id
+          FROM combined
+          WHERE quantity IS NOT NULL
+            AND unit_price IS NOT NULL
+            AND category IS NOT NULL
+        ),
+        with_revenue AS (
+          SELECT
+            *,
+            quantity * unit_price as revenue
+          FROM cleaned
+        )
+        SELECT
+          category,
+          SUM(revenue) as total_revenue,
+          COUNT(order_id) as order_count
+        FROM with_revenue
+        GROUP BY category
+        ORDER BY category
+
+  # Step 4: Write output to parquet
+  - id: write-parquet
+    component: duckdb.processor
+    mode: transform
+    needs: ["transform-and-aggregate"]
+    config:
+      query: |
+        COPY "df_transform_and_aggregate"
+        TO 'outputs/revenue_by_category.parquet'
+        (FORMAT PARQUET, COMPRESSION SNAPPY)
