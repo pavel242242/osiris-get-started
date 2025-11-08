@@ -241,7 +241,7 @@ If the file **already has content**, add the `"osiris"` entry inside the existin
 
 **Important**: Replace `/Users/USERNAME/osiris-get-started` with the actual path you got from the `echo` command above.
 
-#### Restart Claude Desktop
+#### Restart Claude Desktop (applies also to VS Code with Claude Code)
 
 After saving the configuration file:
 1. **Quit Claude Desktop completely** (don't just close the window)
@@ -274,15 +274,31 @@ echo "$HOME/osiris-get-started"
 ```
 
 Now in Claude Code:
+##### With VS Code
+1. In new terminal window (or VS Code terminal)
+```bash
+cd ~/osiris-get-started
+claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=/Users/USERNAME/osiris-get-started
+```
+Replace `/Users/USERNAME/osiris-get-started` with your actual path from the `echo` command above
 
-1. Open VS Code with Claude Code extension installed
 2. Open this tutorial repository as your workspace
-3. Open the Claude Code panel
-4. Type:
+4. Check MCP in Claude Code window with ```\mcp```
+
+##### In terminal
+
+1. In new terminal window (or VS Code terminal)
+```bash
+cd ~/osiris-get-started
+claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=/Users/USERNAME/osiris-get-started
+```
+Replace `/Users/USERNAME/osiris-get-started` with your actual path from the `echo` command above
+
+2. Run Claude Code:
    ```
-   claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=/Users/USERNAME/osiris-get-started
+   claude
    ```
-5. Replace `/Users/USERNAME/osiris-get-started` with your actual path from the `echo` command above
+3. Check available servers with ```\mcp``` command
 
 #### Method 2: Manual Configuration
 
