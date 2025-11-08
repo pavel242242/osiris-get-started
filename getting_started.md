@@ -275,7 +275,7 @@ echo "$HOME/osiris-get-started"
 
 Now in Claude Code:
 ##### With VS Code
-1. In new terminal window (or VS Code terminal)
+1. In new VS Code terminal run:
 ```bash
 cd ~/osiris-get-started
 claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=/Users/USERNAME/osiris-get-started
@@ -287,7 +287,7 @@ Replace `/Users/USERNAME/osiris-get-started` with your actual path from the `ech
 
 ##### In terminal
 
-1. In new terminal window (or VS Code terminal)
+1. In new terminal session
 ```bash
 cd ~/osiris-get-started
 claude mcp add osiris .venv/bin/osiris mcp run --env OSIRIS_HOME=/Users/USERNAME/osiris-get-started
