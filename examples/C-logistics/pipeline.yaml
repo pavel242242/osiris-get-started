@@ -7,35 +7,45 @@ description: Multi-layer transformation from raw logistics data to business metr
 
 steps:
   # ========================================
-  # BRONZE LAYER: Load raw data
+  # BRONZE LAYER: Load raw data from Postgres
   # ========================================
 
   - name: load_shipments_bronze
-    type: read_csv
+    type: read_postgres
     config:
-      path: examples/C-logistics/data/shipments_raw.csv
-      options:
-        infer_schema: true
-        parse_dates: [order_date]
+      connection:
+        host: localhost
+        port: 5433
+        database: logistics
+        user: osiris
+        password: osiris_pass
+      table: shipments_bronze
     outputs:
       - shipments_bronze
 
   - name: load_customers_bronze
-    type: read_csv
+    type: read_postgres
     config:
-      path: examples/C-logistics/data/customers_raw.csv
-      options:
-        infer_schema: true
-        parse_dates: [registration_date]
+      connection:
+        host: localhost
+        port: 5433
+        database: logistics
+        user: osiris
+        password: osiris_pass
+      table: customers_bronze
     outputs:
       - customers_bronze
 
   - name: load_shipping_costs_bronze
-    type: read_csv
+    type: read_postgres
     config:
-      path: examples/C-logistics/data/shipping_costs.csv
-      options:
-        infer_schema: true
+      connection:
+        host: localhost
+        port: 5433
+        database: logistics
+        user: osiris
+        password: osiris_pass
+      table: shipping_costs
     outputs:
       - shipping_costs_bronze
 

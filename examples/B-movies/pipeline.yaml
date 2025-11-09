@@ -6,23 +6,31 @@ name: movie_coactors_network
 description: Build a co-actor network from movie cast data
 
 steps:
-  # Step 1: Load movies data
+  # Step 1: Load movies data from Postgres
   - name: load_movies
-    type: read_csv
+    type: read_postgres
     config:
-      path: examples/B-movies/data/movies.csv
-      options:
-        infer_schema: true
+      connection:
+        host: localhost
+        port: 5432
+        database: movies
+        user: osiris
+        password: osiris_pass
+      table: movies
     outputs:
       - movies_data
 
-  # Step 2: Load cast data
+  # Step 2: Load cast data from Postgres
   - name: load_cast
-    type: read_csv
+    type: read_postgres
     config:
-      path: examples/B-movies/data/cast.csv
-      options:
-        infer_schema: true
+      connection:
+        host: localhost
+        port: 5432
+        database: movies
+        user: osiris
+        password: osiris_pass
+      table: cast
     outputs:
       - cast_data
 

@@ -1,7 +1,14 @@
-I want to build a co-actor network analysis pipeline using the data in examples/B-movies/data/.
+I want to build a co-actor network analysis pipeline using the Postgres database.
+
+Connection details:
+- Host: localhost
+- Port: 5432
+- Database: movies
+- User: osiris
+- Password: osiris_pass
 
 Please:
-1. Load movies.csv and cast.csv from examples/B-movies/data/
+1. Connect to the Postgres database and load the 'movies' and 'cast' tables
 2. Join the datasets to get movie-actor relationships
 3. Create a co-actor matrix showing how many times each pair of actors appeared together
 4. Calculate co-actor frequency (number of shared movies)

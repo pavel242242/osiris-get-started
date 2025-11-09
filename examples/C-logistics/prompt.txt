@@ -1,9 +1,16 @@
-I want to build a logistics data transformation pipeline (bronze to gold) using the data in examples/C-logistics/data/.
+I want to build a logistics data transformation pipeline (bronze to gold) using the Postgres database.
+
+Connection details:
+- Host: localhost
+- Port: 5433
+- Database: logistics
+- User: osiris
+- Password: osiris_pass
 
 Please create a multi-layer transformation:
 
-Bronze layer (raw data):
-1. Load shipments_raw.csv, customers_raw.csv, and shipping_costs.csv
+Bronze layer (raw data from Postgres):
+1. Load shipments_bronze, customers_bronze, and shipping_costs tables from Postgres
 
 Silver layer (cleaned & joined):
 2. Clean shipments: remove cancelled shipments, validate dates

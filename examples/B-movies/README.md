@@ -44,12 +44,48 @@ Make sure you've completed the [Getting Started Guide](../../getting_started.md)
 - ✅ Installed Osiris in a virtual environment
 - ✅ Configured MCP with Claude Desktop or Claude Code
 - ✅ Verified Osiris is working (`osiris --version`)
+- ✅ Docker installed and running (for database setup)
 
-### Using Claude (Recommended)
+### Step 1: Start the Database
+
+This example uses a Postgres database to demonstrate real-world data source connectivity.
+
+**Start the database:**
+```bash
+cd examples/B-movies
+docker-compose up -d
+```
+
+**Verify it's running:**
+```bash
+docker ps | grep osiris-movies-db
+```
+
+**Check the data:**
+```bash
+docker exec -it osiris-movies-db psql -U osiris -d movies -c "SELECT COUNT(*) FROM movies;"
+docker exec -it osiris-movies-db psql -U osiris -d movies -c "SELECT COUNT(*) FROM cast;"
+```
+
+You should see 10 movies and 27 cast records.
+
+**Connection details:**
+- Host: `localhost`
+- Port: `5432`
+- Database: `movies`
+- User: `osiris`
+- Password: `osiris_pass`
+- Tables: `movies`, `cast`
+
+**Alternative: Use CSV files**
+
+If you prefer to work with CSV files instead of Postgres, you can use the files in `data/` directory and modify the prompts accordingly.
+
+### Step 2: Use Claude to Build the Pipeline
 
 This is the AI-native approach - let Claude work with Osiris to build your pipeline!
 
-#### Step 1: Open Claude
+**Open Claude:**
 
 **Claude Desktop:**
 - Make sure Osiris MCP server is connected (check connectors panel)
@@ -58,15 +94,22 @@ This is the AI-native approach - let Claude work with Osiris to build your pipel
 - Open this workspace in VS Code
 - Verify Osiris is connected: run `/mcp` and look for "osiris"
 
-#### Step 2: Use the Starter Prompt
+**Use the Starter Prompt:**
 
 Copy and paste this prompt into Claude:
 
 ```
-I want to build a co-actor network analysis pipeline using the data in examples/B-movies/data/.
+I want to build a co-actor network analysis pipeline using the Postgres database.
+
+Connection details:
+- Host: localhost
+- Port: 5432
+- Database: movies
+- User: osiris
+- Password: osiris_pass
 
 Please:
-1. Load movies.csv and cast.csv from examples/B-movies/data/
+1. Connect to the Postgres database and load the 'movies' and 'cast' tables
 2. Join the datasets to get movie-actor relationships
 3. Create a co-actor matrix showing how many times each pair of actors appeared together
 4. Calculate co-actor frequency (number of shared movies)
@@ -82,7 +125,7 @@ Before writing the pipeline, please:
 Let me review and approve before you create it.
 ```
 
-#### Step 3: Review and Run
+**Review and Run:**
 
 Claude will:
 1. Ask clarifying questions (answer based on your preferences)
@@ -110,10 +153,16 @@ After running the pipeline, you should see a co-actor network with actor pairs a
 
 ## Troubleshooting
 
-**Pipeline fails to load CSV files:**
-- Check that you're running from the repository root
-- Verify `OSIRIS_HOME` is set correctly
-- Confirm the data files exist: `ls examples/B-movies/data/`
+**Pipeline fails to connect to database:**
+- Check that Docker is running: `docker ps`
+- Verify the container is running: `docker ps | grep osiris-movies-db`
+- Check container logs: `docker logs osiris-movies-db`
+- Ensure port 5432 is not in use by another service
+
+**Connection refused errors:**
+- Wait a few seconds for Postgres to fully start
+- Check the healthcheck: `docker inspect osiris-movies-db | grep Health`
+- Try restarting: `docker-compose restart`
 
 **Join issues:**
 - Verify movie_id columns exist in both datasets
@@ -124,6 +173,21 @@ After running the pipeline, you should see a co-actor network with actor pairs a
 - Check the pipeline completed successfully
 - Look in `outputs/` directory (create if missing)
 - Review execution logs for errors
+
+## Cleanup
+
+When you're done with this example, stop the database:
+
+```bash
+cd examples/B-movies
+docker-compose down
+```
+
+To completely remove the database and its data:
+
+```bash
+docker-compose down -v
+```
 
 ## Next Steps
 
